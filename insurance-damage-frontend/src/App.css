@@ -1043,23 +1043,212 @@ input[type="file"] {
 }
 
 @media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .app {
+    flex-direction: column;
   }
   
-  .settings-grid {
-    grid-template-columns: 1fr;
+  .sidebar {
+    width: 100%;
+    height: auto;
+    order: 2;
+    padding: 12px 0;
   }
   
-  .history-item {
+  .logo {
+    padding: 0 16px 12px;
+    font-size: 18px;
+    justify-content: center;
+  }
+  
+  .nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0;
+  }
+  
+  .nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    margin: 0 2px;
+    font-size: 11px;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .nav-item svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .nav-item.active::before {
+    display: none;
+  }
+  
+  .topbar {
+    padding: 0 16px;
+    height: 60px;
+  }
+  
+  .topbar h1 {
+    font-size: 18px;
+  }
+  
+  .topbar-actions {
+    gap: 8px;
+  }
+  
+  .btn-new {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .user-info {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .content {
+    padding: 16px;
+  }
+  
+  .upload-box {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .upload-placeholder {
+    padding: 30px 16px;
+  }
+  
+  .upload-placeholder svg {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .upload-placeholder p {
+    font-size: 16px;
+  }
+  
+  .upload-placeholder span {
+    font-size: 12px;
+  }
+  
+  .results-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    height: auto;
+  }
+  
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  
+  .card-title {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .status-indicator {
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .status-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .status-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .status-text {
+    font-size: 18px;
+  }
+  
+  .info-grid {
     grid-template-columns: 1fr;
     gap: 12px;
-    text-align: left;
   }
   
-  .setting-item {
+  .info-item {
+    padding: 12px;
+  }
+  
+  .info-label {
+    font-size: 10px;
+  }
+  
+  .info-value {
+    font-size: 14px;
+  }
+  
+  .info-value.cost {
+    font-size: 18px;
+  }
+  
+  .detection-name {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  
+  .confidence-bar {
+    width: 100%;
+    height: 6px;
+  }
+  
+  .detection-item {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 8px;
+    padding: 12px;
+  }
+  
+  .confidence-value {
+    align-self: flex-end;
+    font-size: 12px;
+  }
+  
+  .chat-card {
+    height: 350px;
+  }
+  
+  .chat-container {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .message-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .message-avatar svg {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .message.assistant .message-content {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .chat-input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+  
+  .btn-send {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .btn-send svg {
+    width: 16px;
+    height: 16px;
   }
 }
