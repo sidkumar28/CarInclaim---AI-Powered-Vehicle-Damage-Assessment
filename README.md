@@ -5,6 +5,7 @@ A web application that uses computer vision to analyze vehicle damage from photo
 ## What it does
 
 Upload a photo of your damaged vehicle and get:
+
 - Automatic damage detection (scratches, dents, broken parts, severe damage)
 - Instant claim approval/rejection decision
 - Cost estimation for repairs
@@ -20,6 +21,7 @@ Upload a photo of your damaged vehicle and get:
 ## Setup Instructions
 
 ### Prerequisites
+
 - Python 3.8+
 - Node.js 16+
 - npm or yarn
@@ -27,23 +29,27 @@ Upload a photo of your damaged vehicle and get:
 ### Backend Setup
 
 1. Navigate to backend folder:
+
 ```bash
 cd insurance-damage-backend
 ```
 
 2. Install Python dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 3. Add your OpenAI API key to environment variables or create a `.env` file:
+
 ```
 OPENAI_API_KEY=your_api_key_here
 ```
 
 4. Start the backend server:
+
 ```bash
-uvicorn main:app --reload
+uvicorn app:app --reload
 ```
 
 Backend will run on `http://127.0.0.1:8000`
@@ -51,16 +57,19 @@ Backend will run on `http://127.0.0.1:8000`
 ### Frontend Setup
 
 1. Navigate to frontend folder:
+
 ```bash
 cd insurance-damage-frontend
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -71,7 +80,7 @@ Frontend will run on `http://localhost:5173`
 
 1. Open your browser and go to `http://localhost:5173`
 2. Upload a vehicle damage photo (PNG/JPG, max 10MB)
-3. Click "Start AI Analysis" 
+3. Click "Start AI Analysis"
 4. View results including damage detection, claim status, and cost estimates
 5. Use the AI assistant to ask questions about the assessment
 6. Check History and Settings pages for additional features

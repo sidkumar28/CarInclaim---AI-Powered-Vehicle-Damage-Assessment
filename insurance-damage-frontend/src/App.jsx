@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import axios from "axios";
 import "./App.css";
+import axios from "axios";
+import { API_BASE_URL } from "./config";
 
 function App() {
   const [file, setFile] = useState(null);
@@ -30,7 +31,7 @@ function App() {
     formData.append("file", file);
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/predict", formData);
+      const res = await axios.post(`${API_BASE_URL}/predict`, formData);
       setResult(res.data);
     } catch (error) {
       alert("Error analyzing image");
@@ -42,7 +43,7 @@ function App() {
     if (!question.trim()) return;
     setLoading(true);
     try {
-      const res = await axios.post("http://127.0.0.1:8000/ask-agent", {
+      const res = await axios.post(`${API_BASE_URL}/ask-agent`, {
         detections: result.detections,
         decision: result.decision,
         question: question,
