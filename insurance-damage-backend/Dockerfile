@@ -33,4 +33,6 @@ HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=5 \
 
 
 # 7. Command to run the app
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+
+
