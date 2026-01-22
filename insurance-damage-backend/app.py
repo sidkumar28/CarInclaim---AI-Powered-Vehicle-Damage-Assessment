@@ -58,19 +58,20 @@ app.add_middleware(RequestIDMiddleware)
 # ---------- LOGGING MIDDLEWARE ----------
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    start_time = time.time()
+    start = time.perf_counter()
+
     response = await call_next(request)
-    process_time = (time.time() - start_time) * 1000
 
-    log_fn = logger.debug if request.url.path == "/health" else logger.info
+    latency_ms = (time.perf_counter() - start) * 1000
 
-    log_fn(
+    logger.info(
         f"{request.method} {request.url.path} | "
         f"status={response.status_code} | "
         f"request_id={request.state.request_id} | "
-        f"latency={process_time:.2f}ms"
+        f"latency={latency_ms:.2f}ms"
     )
     return response
+
 
 # ---------- CORS ----------
 app.add_middleware(
@@ -110,24 +111,20 @@ class AgentRequest(BaseModel):
 @app.post("/ask-agent")
 async def ask_agent_endpoint(payload: AgentRequest, request: Request):
     try:
-        logger.info("Agent question received")
-        answer = ask_agent(payload.question, payload.decision)
-        logger.info("Agent response generated")
-        return {"answer": answer}
+        result = ask_agent(payload.question, payload.decision)
+
+        return {
+            "answer": result["answer"],
+            "source": result["source"],
+            "request_id": request.state.request_id
+        }
+
     except Exception:
-        logger.error(
-            "agent_failed",
-            extra={
-                "request_id": request.state.request_id,
-                "path": "/ask-agent",
-            },
-            exc_info=True,
-        )
+        logger.exception("agent_failed")
         raise HTTPException(
             status_code=500,
             detail={
                 "error": "Agent error",
-                "request_id": request.state.request_id,
+                "request_id": request.state.request_id
             }
         )
-

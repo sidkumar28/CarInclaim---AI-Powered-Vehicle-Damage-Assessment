@@ -80,6 +80,7 @@ function App() {
       );
 
       setAnswer(res.data.answer);
+      setAnswerSource(res.data.source);
       setQuestion("");
     } catch (error) {
       alert("Error asking AI");
