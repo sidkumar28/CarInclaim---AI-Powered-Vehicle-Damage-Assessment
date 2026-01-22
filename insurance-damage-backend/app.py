@@ -16,6 +16,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/health")
+def health_check():
+    return {
+        "status": "ok",
+        "service": "insurance-backend"
+    }
+    
 # EXISTING PREDICTION ENDPOINT
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
