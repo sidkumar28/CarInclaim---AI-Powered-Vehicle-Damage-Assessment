@@ -1,122 +1,129 @@
-# CarinClaim - Vehicle Damage Assessment
+🚗 CarinClaim — Vehicle Damage Assessment Platform
+CarinClaim is a full-stack web application that uses computer vision and AI to analyze vehicle damage from images and assist with insurance claim decisions.
+It is designed to be production-ready, observable, and easy to run using Docker or local setup.
 
-A web application that uses computer vision to analyze vehicle damage from photos and automatically determine insurance claim eligibility with cost estimates.
+✨ What It Does
+Upload a photo of a damaged vehicle and instantly get:
+🚘 Automatic damage detection (dent, scratch, severe damage, etc.)
+📋 Claim eligibility decision
+💰 Repair cost estimation
+🤖 AI assistant to explain the decision (with safe fallback)
+🩺 Health checks and structured logs
+🔁 Circuit breaker for AI failures (OpenAI-safe)
 
-## What it does
+🧱 Tech Stack
+Backend
+Python
+FastAPI
+YOLO (Ultralytics)
+OpenAI (with fallback logic)
+Structured logging + request tracing
+Frontend
+React
+Vite
+Axios
+Infrastructure
+Docker & Docker Compose
+Nginx (frontend)
+Circuit breaker & fallback patterns
 
-Upload a photo of your damaged vehicle and get:
+🚀 How to Run the Project
+You can run CarinClaim in two ways:
 
-- Automatic damage detection (scratches, dents, broken parts, severe damage)
-- Instant claim approval/rejection decision
-- Cost estimation for repairs
-- Interactive before/after comparison with highlighted damage areas
-- AI assistant to answer questions about the assessment
+✅ Option A (Recommended): Run with Docker
+Best for reviewers, teammates, and production-like environments.
+Prerequisites
+Docker Desktop (Windows/macOS)
+OR
+Docker Engine + Docker Compose (Linux)
+Steps
+git clone <your-repo-url>
+cd application
+docker compose up --build
+Access
+Frontend: http://localhost:3000
+Backend API Docs: http://localhost:8000/docs
+Health Check: http://localhost:8000/health
 
-## Tech Stack
+✔ One command
+✔ Same environment for everyone
+✔ No Python / Node version issues
 
-**Backend:** Python, FastAPI, YOLO object detection, OpenAI GPT
-**Frontend:** React, Vite, Axios
-**Styling:** Custom CSS with modern design
-
-## Setup Instructions
-
-### Prerequisites
-
-- Python 3.8+
-- Node.js 16+
-- npm or yarn
-
-### Backend Setup
-
-1. Navigate to backend folder:
-
-```bash
+🧑‍💻 Option B: Run Locally (Without Docker)
+Useful if Docker is not installed.
+Prerequisites
+Python 3.9+
+Node.js 18+
+npm
+Backend Setup
 cd insurance-damage-backend
-```
-
-2. Install Python dependencies:
-
-```bash
+python -m venv venv
+source venv/bin/activate # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-3. Add your OpenAI API key to environment variables or create a `.env` file:
-
-```
+Set environment variable (or .env file):
 OPENAI_API_KEY=your_api_key_here
-```
 
-4. Start the backend server:
-
-```bash
+Start backend:
 uvicorn app:app --reload
-```
+Backend runs at:
+➡ http://localhost:8000
 
-Backend will run on `http://127.0.0.1:8000`
-
-### Frontend Setup
-
-1. Navigate to frontend folder:
-
-```bash
+Frontend Setup
 cd insurance-damage-frontend
-```
-
-2. Install dependencies:
-
-```bash
 npm install
-```
-
-3. Start the development server:
-
-```bash
 npm run dev
-```
 
-Frontend will run on `http://localhost:5173`
+Frontend runs at:
+➡ http://localhost:5173
+🧪 Features You Can Test
+✅ /health endpoint
+✅ Damage prediction
+✅ AI agent (fallback works if OpenAI fails)
+✅ Structured logs with request IDs
+✅ Circuit breaker behavior
+✅ End-to-end flow from UI to backend
 
-## Usage
-
-1. Open your browser and go to `http://localhost:5173`
-2. Upload a vehicle damage photo (PNG/JPG, max 10MB)
-3. Click "Start AI Analysis"
-4. View results including damage detection, claim status, and cost estimates
-5. Use the AI assistant to ask questions about the assessment
-6. Check History and Settings pages for additional features
-
-## Features
-
-- **Analysis Page:** Upload and analyze vehicle damage photos
-- **History Page:** View past analyses with statistics dashboard
-- **Settings Page:** Configure AI model parameters and user preferences
-- **Responsive Design:** Works on desktop and mobile devices
-- **Real-time Processing:** Fast damage detection and cost calculation
-
-## File Structure
-
-```
+📂 Project Structure
 application/
 ├── insurance-damage-backend/
-│   ├── main.py
-│   ├── utils/
-│   └── requirements.txt
+│ ├── app.py
+│ ├── utils/
+│ │ ├── predictor.py
+│ │ └── agent.py
+│ ├── requirements.txt
+│ └── Dockerfile
+│
 ├── insurance-damage-frontend/
-│   ├── src/
-│   ├── public/
-│   └── package.json
+│ ├── src/
+│ ├── public/
+│ ├── Dockerfile
+│ └── package.json
+│
+├── docker-compose.yml
 └── README.md
-```
 
-## Notes
+🛠 Notes
+OpenAI API is optional — fallback logic ensures the app works without it
+YOLO model runs locally inside the backend container
+Logs are structured and production-ready
+Designed for easy cloud deployment
 
-- Make sure both backend and frontend servers are running
-- The AI model requires an active internet connection for OpenAI API calls
-- Supported image formats: PNG, JPG, JPEG
-- Maximum file size: 10MB per image
+🧩 Troubleshooting
 
-## Troubleshooting
+Frontend can’t reach backend
+→ Ensure backend is running on port 8000
 
-- If backend fails to start, check if all Python dependencies are installed
-- If frontend shows connection errors, verify backend is running on port 8000
-- For API key issues, ensure OpenAI key is properly set in environment variables
+AI agent returns fallback
+→ OpenAI key missing or invalid (expected behavior)
+
+Docker command fails
+→ Make sure Docker Desktop / Docker Engine is running
+
+⭐ Project Quality
+
+This project is intentionally built with industry practices:
+Dockerized services
+Health checks
+Observability
+Failure handling
+CI/CD & cloud-ready design
