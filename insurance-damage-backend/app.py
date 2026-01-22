@@ -6,20 +6,39 @@ from fastapi import FastAPI, File, UploadFile, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
-
+import json
+from datetime import datetime
 from utils.predictor import predict_damage
 from utils.agent import ask_agent
 
 # ---------- LOGGING ----------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
-logging.basicConfig(
-    level=LOG_LEVEL,
-    format="%(asctime)s | %(levelname)s | %(message)s"
-)
+class JsonFormatter(logging.Formatter):
+    def format(self, record):
+        log_record = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "level": record.levelname,
+            "service": "insurance-backend",
+            "message": record.getMessage(),
+        }
+
+        if hasattr(record, "request_id"):
+            log_record["request_id"] = record.request_id
+
+        if record.exc_info:
+            log_record["exception"] = self.formatException(record.exc_info)
+
+        return json.dumps(log_record)
+    
+handler = logging.StreamHandler()
+handler.setFormatter(JsonFormatter())
 
 logger = logging.getLogger("insurance-backend")
 logger.info(f"Logger initialized with level={LOG_LEVEL}")
+logger.setLevel(LOG_LEVEL)
+logger.handlers.clear()
+logger.addHandler(handler)
 
 # ---------- APP ----------
 app = FastAPI()
@@ -44,12 +63,18 @@ async def log_requests(request: Request, call_next):
     latency = (time.time() - start_time) * 1000
 
     logger.info(
-        f"{request.method} {request.url.path} | "
-        f"status={response.status_code} | "
-        f"request_id={request.state.request_id} | "
-        f"latency={latency:.2f}ms"
+        "request_completed",
+        extra={
+            "request_id": request.state.request_id,
+            "path": request.url.path,
+            "method": request.method,
+            "status": response.status_code,
+            "latency_ms": round(latency, 2),
+        },
     )
+
     return response
+
 
 # ---------- CORS ----------
 app.add_middleware(
@@ -94,11 +119,19 @@ async def ask_agent_endpoint(payload: AgentRequest, request: Request):
         logger.info("Agent response generated")
         return {"answer": answer}
     except Exception:
-        logger.error("Agent failed", exc_info=True)
+        logger.error(
+            "agent_failed",
+            extra={
+                "request_id": request.state.request_id,
+                "path": "/ask-agent",
+            },
+            exc_info=True,
+        )
         raise HTTPException(
             status_code=500,
             detail={
                 "error": "Agent error",
-                "request_id": request.state.request_id
+                "request_id": request.state.request_id,
             }
         )
+
