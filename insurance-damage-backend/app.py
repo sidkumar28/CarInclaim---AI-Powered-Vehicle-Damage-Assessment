@@ -60,21 +60,17 @@ app.add_middleware(RequestIDMiddleware)
 async def log_requests(request: Request, call_next):
     start_time = time.time()
     response = await call_next(request)
-    latency = (time.time() - start_time) * 1000
+    process_time = (time.time() - start_time) * 1000
 
-    logger.info(
-        "request_completed",
-        extra={
-            "request_id": request.state.request_id,
-            "path": request.url.path,
-            "method": request.method,
-            "status": response.status_code,
-            "latency_ms": round(latency, 2),
-        },
+    log_fn = logger.debug if request.url.path == "/health" else logger.info
+
+    log_fn(
+        f"{request.method} {request.url.path} | "
+        f"status={response.status_code} | "
+        f"request_id={request.state.request_id} | "
+        f"latency={process_time:.2f}ms"
     )
-
     return response
-
 
 # ---------- CORS ----------
 app.add_middleware(
