@@ -5,6 +5,7 @@ FROM python:3.9-slim
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 
@@ -25,6 +26,11 @@ COPY . .
 
 # 6. Expose port FastAPI will run on
 EXPOSE 8000
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=5 \
+    CMD curl -f http://127.0.0.1:8000/health || exit 1
+
+
 
 # 7. Command to run the app
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
