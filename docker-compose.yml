@@ -5,8 +5,8 @@ services:
     container_name: insurance-backend
     ports:
       - "8000:8000"
-    environment:
-      - OPENAI_API_KEY=dummy_key
+    env_file:
+      - ./insurance-damage-backend/.env
     restart: unless-stopped
 
   frontend:
@@ -17,6 +17,8 @@ services:
     container_name: insurance-frontend
     ports:
       - "3000:80"
+    env_file:
+      - ./insurance-damage-frontend/.env
     depends_on:
       - backend
 

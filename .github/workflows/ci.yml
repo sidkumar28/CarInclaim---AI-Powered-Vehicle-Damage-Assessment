@@ -11,6 +11,11 @@ jobs:
     name: Backend CI
     runs-on: ubuntu-latest
 
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      LOG_LEVEL: INFO
+      ENVIRONMENT: ci
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,6 +47,9 @@ jobs:
   frontend:
     name: Frontend CI
     runs-on: ubuntu-latest
+
+    env:
+      VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
 
     steps:
       - name: Checkout code

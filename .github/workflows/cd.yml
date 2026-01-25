@@ -1,0 +1,37 @@
+name: CD - Auto Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  LOG_LEVEL: INFO
+  ENVIRONMENT: production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend image
+        run: |
+          docker build \
+            -t carinclaim-backend:latest \
+            ./insurance-damage-backend
+
+      - name: Build frontend image
+        run: |
+          docker build \
+            -t carinclaim-frontend:latest \
+            ./insurance-damage-frontend
+
+      - name: Deployment placeholder
+        run: |
+          echo "Images built successfully"
