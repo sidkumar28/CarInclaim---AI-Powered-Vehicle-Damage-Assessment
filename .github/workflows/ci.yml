@@ -7,14 +7,14 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  backend:
+    name: Backend CI
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ---------- Backend ----------
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -26,7 +26,27 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      # ---------- Frontend ----------
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build backend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./insurance-damage-backend
+          file: ./insurance-damage-backend/Dockerfile
+          push: false
+          tags: insurance-backend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -40,9 +60,26 @@ jobs:
         working-directory: insurance-damage-frontend
         run: npm run build
 
-      # ---------- Docker ----------
-      - name: Validate Docker Compose
-        run: docker compose config
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker images
-        run: docker compose build
+      - name: Build frontend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./insurance-damage-frontend
+          file: ./insurance-damage-frontend/Dockerfile
+          push: false
+          tags: insurance-frontend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  compose:
+    name: Docker Compose Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose
+        run: docker compose config
