@@ -14,6 +14,8 @@ from utils.metrics import (HTTP_REQUESTS_TOTAL, HTTP_REQUEST_LATENCY)
 from utils.metrics import (PREDICTION_REQUESTS_TOTAL, PREDICTION_LATENCY)
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response
+
+os.environ.setdefault("OPENAI_API_KEY", "ci_dummy_key")
 # ---------- LOGGING ----------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
