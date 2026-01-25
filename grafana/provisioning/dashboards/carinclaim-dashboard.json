@@ -1,0 +1,67 @@
+{
+  "title": "CarinClaim – System Overview",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Circuit Breaker State",
+      "targets": [
+        {
+          "expr": "circuit_state",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "type": "value",
+              "options": { "0": { "text": "CLOSED" }, "1": { "text": "OPEN" } }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Prediction Latency (ms)",
+      "targets": [
+        {
+          "expr": "prediction_latency_ms_sum / prediction_latency_ms_count",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Agent Requests",
+      "targets": [
+        {
+          "expr": "agent_requests_total",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Agent OpenAI Failures",
+      "targets": [
+        {
+          "expr": "agent_openai_failures_total",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Agent Fallback Usage",
+      "targets": [
+        {
+          "expr": "agent_fallback_total",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "version": 1
+}

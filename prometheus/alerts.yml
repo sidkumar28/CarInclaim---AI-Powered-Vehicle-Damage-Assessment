@@ -1,0 +1,35 @@
+groups:
+  - name: insurance-backend-alerts
+    rules:
+      # Circuit Breaker Open
+      - alert: CircuitBreakerOpen
+        expr: circuit_state == 1
+        for: 30s
+        labels:
+          severity: critical
+          service: insurance-backend
+        annotations:
+          summary: "Circuit breaker is OPEN"
+          description: "OpenAI failures exceeded threshold. System is serving fallback responses."
+
+      # OpenAI Failures Spike
+      - alert: OpenAIFailureSpike
+        expr: increase(agent_openai_failures_total[1m]) > 2
+        for: 30s
+        labels:
+          severity: warning
+          service: insurance-backend
+        annotations:
+          summary: "OpenAI failures increasing"
+          description: "Multiple OpenAI API failures detected in last 1 minute."
+
+      # High Agent Latency
+      - alert: HighAgentLatency
+        expr: histogram_quantile(0.95, rate(agent_latency_ms_bucket[1m])) > 3000
+        for: 1m
+        labels:
+          severity: warning
+          service: insurance-backend
+        annotations:
+          summary: "High agent response latency"
+          description: "95th percentile agent latency > 3 seconds."
