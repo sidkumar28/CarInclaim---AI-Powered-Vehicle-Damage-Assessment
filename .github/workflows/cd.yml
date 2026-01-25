@@ -35,3 +35,4 @@ jobs:
       - name: Deployment placeholder
         run: |
           echo "Images built successfully"
+          echo "Ready for cloud deployment"
