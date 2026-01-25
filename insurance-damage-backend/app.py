@@ -10,7 +10,10 @@ import json
 from datetime import datetime
 from utils.predictor import predict_damage
 from utils.agent import ask_agent
-
+from utils.metrics import (HTTP_REQUESTS_TOTAL, HTTP_REQUEST_LATENCY)
+from utils.metrics import (PREDICTION_REQUESTS_TOTAL, PREDICTION_LATENCY)
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from fastapi.responses import Response
 # ---------- LOGGING ----------
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
@@ -58,19 +61,28 @@ app.add_middleware(RequestIDMiddleware)
 # ---------- LOGGING MIDDLEWARE ----------
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    start = time.perf_counter()
-
+    start_time = time.time()
     response = await call_next(request)
+    latency = (time.time() - start_time) * 1000
 
-    latency_ms = (time.perf_counter() - start) * 1000
+    path = request.url.path
+
+    HTTP_REQUESTS_TOTAL.labels(
+        method=request.method,
+        path=path,
+        status=response.status_code
+    ).inc()
+
+    HTTP_REQUEST_LATENCY.labels(path=path).observe(latency)
 
     logger.info(
-        f"{request.method} {request.url.path} | "
+        f"{request.method} {path} | "
         f"status={response.status_code} | "
         f"request_id={request.state.request_id} | "
-        f"latency={latency_ms:.2f}ms"
+        f"latency={latency:.2f}ms"
     )
     return response
+
 
 
 # ---------- CORS ----------
@@ -88,13 +100,31 @@ def health_check():
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...), request: Request = None):
+    start_time = time.time()
+
     try:
         logger.info("Prediction request received")
+        PREDICTION_REQUESTS_TOTAL.inc()
+        
         result = predict_damage(file)
+        latency = (time.time() - start_time) * 1000
+        
+        PREDICTION_LATENCY.observe(latency)
         logger.info("Prediction completed successfully")
         return result
+
     except Exception:
-        logger.error("Prediction failed", exc_info=True)
+        latency = (time.time() - start_time) * 1000
+        PREDICTION_LATENCY.observe(latency)
+
+        logger.error(
+            "Prediction failed",
+            exc_info=True,
+            extra={
+                "request_id": request.state.request_id if request else None
+            }
+        )
+
         raise HTTPException(
             status_code=500,
             detail={
@@ -102,6 +132,7 @@ async def predict(file: UploadFile = File(...), request: Request = None):
                 "request_id": request.state.request_id if request else None
             }
         )
+
 
 class AgentRequest(BaseModel):
     detections: list
@@ -128,3 +159,7 @@ async def ask_agent_endpoint(payload: AgentRequest, request: Request):
                 "request_id": request.state.request_id
             }
         )
+        
+@app.get("/metrics")
+def metrics():
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)

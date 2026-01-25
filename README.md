@@ -37,9 +37,10 @@ Docker Desktop (Windows/macOS)
 OR
 Docker Engine + Docker Compose (Linux)
 Steps
-git clone <your-repo-url>
-cd application
-docker compose up --build
+1.git clone <your-repo-url>
+2.cd application
+3.Start Docker Desktop
+4.docker compose up --build
 Access
 Frontend: http://localhost:3000
 Backend API Docs: http://localhost:8000/docs
