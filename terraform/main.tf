@@ -69,3 +69,10 @@ resource "aws_instance" "carinclaim" {
     Name = "carinclaim-server"
   }
 }
+
+resource "aws_eip" "carinclaim_eip" {
+  instance = aws_instance.carinclaim.id
+  vpc      = true
+}
+
+
