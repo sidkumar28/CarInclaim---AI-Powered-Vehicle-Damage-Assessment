@@ -17,6 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ---------- SSH SETUP ----------
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -24,12 +25,28 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
+      # ---------- DEPLOY ----------
       - name: Deploy to EC2
         run: |
           ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             set -e
-            cd ~/apps/carinclaim
+
+            # Ensure base directory exists
+            mkdir -p ~/apps
+            cd ~/apps
+
+            # First deploy vs update
+            if [ ! -d "carinclaim/.git" ]; then
+              echo "Cloning repository for first deployment..."
+              git clone https://github.com/${{ github.repository }}.git carinclaim
+            fi
+
+            cd carinclaim
+
+            echo "Pulling latest changes..."
             git pull origin main
+
+            echo "Starting containers..."
             docker compose down
-            docker compose up --build -d
+            docker compose up -d --build
           EOF
