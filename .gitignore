@@ -112,3 +112,13 @@ temp/
 
 # Cache
 .cache/
+
+# SSH cred
+carinclaim_deploy_key
+carinclaim_deploy_key.pub
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars

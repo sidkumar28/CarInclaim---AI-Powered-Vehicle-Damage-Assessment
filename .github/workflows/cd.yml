@@ -17,22 +17,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build backend image
+      - name: Setup SSH
         run: |
-          docker build \
-            -t carinclaim-backend:latest \
-            ./insurance-damage-backend
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Build frontend image
+      - name: Deploy to EC2
         run: |
-          docker build \
-            -t carinclaim-frontend:latest \
-            ./insurance-damage-frontend
-
-      - name: Deployment placeholder
-        run: |
-          echo "Images built successfully"
-          echo "Ready for cloud deployment"
+          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+            set -e
+            cd ~/apps/carinclaim
+            git pull origin main
+            docker compose down
+            docker compose up --build -d
+          EOF
