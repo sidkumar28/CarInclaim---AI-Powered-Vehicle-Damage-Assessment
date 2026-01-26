@@ -1,44 +1,51 @@
+############################################
+# SSH Key Pair
+############################################
 resource "aws_key_pair" "deploy" {
   key_name   = "carinclaim-key"
   public_key = file(var.ssh_public_key_path)
 }
 
+############################################
+# Security Group
+############################################
 resource "aws_security_group" "carinclaim_sg" {
-  name = "carinclaim-sg"
+  name        = "carinclaim-sg"
+  description = "Security group for CarinClaim server"
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # SSH
   }
 
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # HTTP
   }
 
   ingress {
     from_port   = 3000
     to_port     = 3000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Frontend
   }
 
   ingress {
     from_port   = 3001
     to_port     = 3001
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Grafana
   }
 
   ingress {
     from_port   = 9090
     to_port     = 9090
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Prometheus
   }
 
   egress {
@@ -49,6 +56,9 @@ resource "aws_security_group" "carinclaim_sg" {
   }
 }
 
+############################################
+# Ubuntu AMI
+############################################
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"]
@@ -59,6 +69,9 @@ data "aws_ami" "ubuntu" {
   }
 }
 
+############################################
+# EC2 Instance
+############################################
 resource "aws_instance" "carinclaim" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
@@ -70,15 +83,18 @@ resource "aws_instance" "carinclaim" {
   }
 }
 
+############################################
+# Elastic IP (Stable IP)
+############################################
 resource "aws_eip" "carinclaim_eip" {
   domain = "vpc"
+
   tags = {
     Name = "carinclaim-eip"
   }
 }
+
 resource "aws_eip_association" "carinclaim_eip_assoc" {
   instance_id   = aws_instance.carinclaim.id
   allocation_id = aws_eip.carinclaim_eip.id
 }
-
-

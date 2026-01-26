@@ -5,19 +5,14 @@ on:
     branches:
       - main
 
-env:
-  LOG_LEVEL: INFO
-  ENVIRONMENT: production
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # ---------- SSH SETUP ----------
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -25,12 +20,10 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
 
-      # ---------- DEPLOY ----------
-      - name: Deploy to EC2
+      - name: Deploy
         run: |
-          ssh -o StrictHostKeyChecking=yes \
-              -i ~/.ssh/id_ed25519 \
-              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+          ssh -i ~/.ssh/id_ed25519 \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             set -e
             cd ~/apps/carinclaim
             git pull origin main
