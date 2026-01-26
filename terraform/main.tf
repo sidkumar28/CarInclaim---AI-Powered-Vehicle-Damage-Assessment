@@ -71,8 +71,14 @@ resource "aws_instance" "carinclaim" {
 }
 
 resource "aws_eip" "carinclaim_eip" {
-  instance = aws_instance.carinclaim.id
-  vpc      = true
+  domain = "vpc"
+  tags = {
+    Name = "carinclaim-eip"
+  }
+}
+resource "aws_eip_association" "carinclaim_eip_assoc" {
+  instance_id   = aws_instance.carinclaim.id
+  allocation_id = aws_eip.carinclaim_eip.id
 }
 
 

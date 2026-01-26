@@ -1,4 +1,4 @@
 output "server_ip" {
-  value       = aws_instance.carinclaim.public_ip
-  description = "Public IP address of CarinClaim EC2 instance"
+  value       = aws_eip.carinclaim_eip.public_ip
+  description = "Elastic IP address of CarinClaim server (stable)"
 }
