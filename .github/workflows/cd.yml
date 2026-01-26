@@ -28,25 +28,12 @@ jobs:
       # ---------- DEPLOY ----------
       - name: Deploy to EC2
         run: |
-          ssh ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=yes \
+              -i ~/.ssh/id_ed25519 \
+              ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             set -e
-
-            # Ensure base directory exists
-            mkdir -p ~/apps
-            cd ~/apps
-
-            # First deploy vs update
-            if [ ! -d "carinclaim/.git" ]; then
-              echo "Cloning repository for first deployment..."
-              git clone https://github.com/${{ github.repository }}.git carinclaim
-            fi
-
-            cd carinclaim
-
-            echo "Pulling latest changes..."
+            cd ~/apps/carinclaim
             git pull origin main
-
-            echo "Starting containers..."
             docker compose down
-            docker compose up -d --build
+            docker compose up --build -d
           EOF
