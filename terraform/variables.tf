@@ -7,5 +7,5 @@ variable "instance_type" {
 }
 
 variable "ssh_public_key_path" {
-  default = "../carinclaim_deploy_key.pub"
+  default = "../carinclaim_prod_key.pub"
 }

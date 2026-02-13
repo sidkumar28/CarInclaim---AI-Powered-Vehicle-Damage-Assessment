@@ -16,26 +16,32 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/carinclaim_ci_key
+          chmod 600 ~/.ssh/carinclaim_ci_key
+
+      - name: Verify SSH key format
+        run: |
+          ssh-keygen -l -f ~/.ssh/carinclaim_ci_key
 
       - name: Test SSH connection
         run: |
-          ssh -o StrictHostKeyChecking=no \
-              -o UserKnownHostsFile=/dev/null \
-              -i ~/.ssh/id_ed25519 \
-              ubuntu@${{ secrets.DEPLOY_HOST }} "echo SSH connection successful"
+          ssh -vvv \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            -i ~/.ssh/carinclaim_ci_key \
+            ubuntu@${{ secrets.DEPLOY_HOST }} "echo SSH connection successful"
 
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no \
-              -o UserKnownHostsFile=/dev/null \
-              -i ~/.ssh/id_ed25519 \
-              ubuntu@${{ secrets.DEPLOY_HOST }} << 'EOF'
-            set -e
-            cd ~/apps/carinclaim
-            git checkout main
-            git pull origin main
-            docker compose down
-            docker compose up --build -d
+          ssh \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            -i ~/.ssh/carinclaim_ci_key \
+            ubuntu@${{ secrets.DEPLOY_HOST }} << 'EOF'
+              set -e
+              cd ~/apps/carinclaim
+              git checkout main
+              git pull origin main
+              docker compose down
+              docker compose up --build -d
           EOF
