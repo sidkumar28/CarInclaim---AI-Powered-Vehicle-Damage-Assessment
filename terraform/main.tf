@@ -48,6 +48,13 @@ resource "aws_security_group" "carinclaim_sg" {
     cidr_blocks = ["0.0.0.0/0"] # Prometheus
   }
 
+  ingress {
+  from_port   = 8000
+  to_port     = 8000
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -78,10 +85,16 @@ resource "aws_instance" "carinclaim" {
   key_name               = aws_key_pair.deploy.key_name
   vpc_security_group_ids = [aws_security_group.carinclaim_sg.id]
 
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp3"
+  }
+
   tags = {
     Name = "carinclaim-server"
   }
 }
+
 
 ############################################
 # Elastic IP (Stable IP)

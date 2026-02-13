@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import "./App.css";
 import axios from "axios";
 import { API_BASE_URL } from "./config";
+import { v4 as uuidv4 } from 'uuid';
 
-const generateRequestId = () => {
-  return crypto.randomUUID();
-};
+import { v4 as uuidv4 } from 'uuid';
+
+const generateRequestId = () => uuidv4();
+
 
 function App() {
   const [file, setFile] = useState(null);
