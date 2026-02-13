@@ -8,7 +8,7 @@ const generateRequestId = () => {
   return uuidv4();
 };
 
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function App() {
   const [file, setFile] = useState(null);
