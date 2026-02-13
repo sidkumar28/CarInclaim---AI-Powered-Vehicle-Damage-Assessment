@@ -4,8 +4,6 @@ import axios from "axios";
 import { API_BASE_URL } from "./config";
 import { v4 as uuidv4 } from 'uuid';
 
-import { v4 as uuidv4 } from 'uuid';
-
 const generateRequestId = () => uuidv4();
 
 
