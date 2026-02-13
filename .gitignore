@@ -114,8 +114,9 @@ temp/
 .cache/
 
 # SSH cred
-carinclaim_deploy_key
-carinclaim_deploy_key.pub
+carinclaim_prod_key
+carinclaim_prod_key.pub
+*.pem
 
 # Terraform
 .terraform/
