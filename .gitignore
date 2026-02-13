@@ -123,3 +123,4 @@ carinclaim_prod_key.pub
 *.tfstate
 *.tfstate.*
 *.tfvars
+terraform.tfvars
