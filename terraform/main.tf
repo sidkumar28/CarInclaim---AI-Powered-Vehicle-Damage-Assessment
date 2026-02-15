@@ -147,10 +147,6 @@ resource "aws_instance" "carinclaim" {
 resource "aws_eip" "carinclaim_eip" {
   domain = "vpc"
 
-  lifecycle {
-    prevent_destroy = true
-  }
-
   tags = {
     Name = "carinclaim-eip"
   }

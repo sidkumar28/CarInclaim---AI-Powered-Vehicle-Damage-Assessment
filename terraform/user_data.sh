@@ -1,11 +1,16 @@
 #!/bin/bash
 
+# Update packages
 apt update -y
-apt install -y docker.io git awscli
 
+# Install required packages
+apt install -y docker.io docker-compose git awscli
+
+# Start and enable Docker
 systemctl start docker
 systemctl enable docker
 
+# Add ubuntu user to docker group
 usermod -aG docker ubuntu
 
 # Fetch OpenAI key from SSM
@@ -20,14 +25,16 @@ OPENAI_KEY=$(aws ssm get-parameter \
 mkdir -p /home/ubuntu/apps
 cd /home/ubuntu/apps
 
+# Clone repository
 git clone https://github.com/sidkumar28/CarInclaim---AI-Powered-Vehicle-Damage-Assessment.git carinclaim
 cd carinclaim
 
-# Create .env
+# Create .env file
 cat <<EOF > .env
 OPENAI_API_KEY=$OPENAI_KEY
 LOG_LEVEL=INFO
-ENVIRONMENT=production
+ENVIRONMENT=development
 EOF
 
-docker compose up -d --build
+# Run containers (legacy docker-compose)
+docker-compose up -d
